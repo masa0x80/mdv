@@ -1,11 +1,21 @@
 # Mdv
 
-Mdv is a simple markdown viewer.
+`mdv` is a simple markdown viewer.
 
 ## Usage
 
+Basic usage is...
+
+### View
+
 ```
-$ mdv [options] [path]
+$ mdv path/to/file
+```
+
+### Edit
+
+```
+$ mdv -e path/to/file
 ```
 
 ## Installation
@@ -13,5 +23,5 @@ $ mdv [options] [path]
 Run the following command:
 
 ```
-$ go get github.com/masa0x80/mdv/...
+$ go get -u github.com/masa0x80/mdv/...
 ```
