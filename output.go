@@ -4,11 +4,17 @@ import (
   "regexp"
   "bufio"
   "fmt"
+  "io"
+  "os"
+  "os/exec"
+  "bytes"
 
   "github.com/mgutz/ansi"
 )
 
 func Output(scanner *bufio.Scanner) error {
+  buf := bytes.NewBufferString("")
+
   for scanner.Scan() {
     re, err := regexp.Compile("(#{1,6}) (.*)")
     if err != nil {
@@ -27,16 +33,37 @@ func Output(scanner *bufio.Scanner) error {
         case 5: format = "magenta+b"
         case 6: format = "cyan+b"
       }
-      msg := ansi.Color(level + " " + text, format)
-      fmt.Println(msg)
+      buf.WriteString(ansi.Color(level + " " + text, format))
     } else {
-      fmt.Printf("%s\n", scanner.Text())
+      buf.WriteString(scanner.Text())
     }
+    buf.WriteString("\n")
   }
-
   if err := scanner.Err(); err != nil {
     return err
   }
 
+  pager(buf.String())
+
   return nil
+}
+
+func pager(text string) {
+  cmd := exec.Command(os.Getenv("PAGER"))
+  r, stdin := io.Pipe()
+  cmd.Stdin = r
+  cmd.Stdout = os.Stdout
+  cmd.Stderr = os.Stderr
+
+  c := make(chan struct{})
+  go func() {
+    defer close(c)
+    cmd.Run()
+  }()
+
+  fmt.Fprintf(stdin, text)
+
+  stdin.Close()
+
+  <-c
 }
