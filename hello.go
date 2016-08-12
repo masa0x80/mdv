@@ -21,16 +21,19 @@ func main() {
     defer fp.Close()
   }
 
-  scanner := bufio.NewScanner(fp)
+  Output(bufio.NewScanner(fp))
+}
+
+func Output(scanner *bufio.Scanner) {
   for scanner.Scan() {
     re, err := regexp.Compile("(#{1,6}) (.*)")
     if err != nil {
       panic(err)
     }
 
-    level    := re.ReplaceAllString(scanner.Text(), "$1")
-    headline := re.ReplaceAllString(scanner.Text(), "$2")
-    if scanner.Text() != headline {
+    level := re.ReplaceAllString(scanner.Text(), "$1")
+    text  := re.ReplaceAllString(scanner.Text(), "$2")
+    if scanner.Text() != text {
       var template string = ""
       switch len(level) {
         case 1: template = "\x1b[31m"
@@ -41,11 +44,12 @@ func main() {
         case 6: template = "\x1b[36m"
       }
       template += "%s %s\x1b[0m\n"
-      fmt.Printf(template, level, headline)
+      fmt.Printf(template, level, text)
     } else {
       fmt.Printf("%s\n", scanner.Text())
     }
   }
+
   if err := scanner.Err(); err != nil {
     panic(err)
   }
