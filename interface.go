@@ -5,15 +5,15 @@ import (
   "os"
 )
 
-func Init() {
+func Init(filePath string) error {
   var fp *os.File
   var err error
 
-	fp, err = os.Open(os.Args[1])
-	if err != nil {
-		panic(err)
-	}
-	defer fp.Close()
+  fp, err = os.Open(filePath)
+  if err != nil {
+    return err
+  }
+  defer fp.Close()
 
-  Output(bufio.NewScanner(fp))
+  return Output(bufio.NewScanner(fp))
 }

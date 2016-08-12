@@ -8,11 +8,11 @@ import (
   "github.com/mgutz/ansi"
 )
 
-func Output(scanner *bufio.Scanner) {
+func Output(scanner *bufio.Scanner) error {
   for scanner.Scan() {
     re, err := regexp.Compile("(#{1,6}) (.*)")
     if err != nil {
-      panic(err)
+      return err
     }
 
     level := re.ReplaceAllString(scanner.Text(), "$1")
@@ -35,6 +35,8 @@ func Output(scanner *bufio.Scanner) {
   }
 
   if err := scanner.Err(); err != nil {
-    panic(err)
+    return err
   }
+
+  return nil
 }

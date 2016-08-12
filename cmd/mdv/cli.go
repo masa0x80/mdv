@@ -20,7 +20,7 @@ type CLI struct {
 }
 
 func (cli *CLI) Run(args []string) int {
-  var version bool
+  var version, edit bool
 
   flags := flag.NewFlagSet("mdv", flag.ContinueOnError)
   flags.SetOutput(os.Stderr)
@@ -29,11 +29,12 @@ func (cli *CLI) Run(args []string) int {
   }
 
   flags.BoolVar(&version, "version", false, "")
+  flags.BoolVar(&edit, "edit", false, "")
+  flags.BoolVar(&edit, "e",    false, "")
 
   if err := flags.Parse(os.Args[1:]); err != nil {
     return ExitCodeFlagPraseError
   }
-
   if version {
     fmt.Fprintf(cli.errStream, "%s v%s\n", Name, Version)
     return ExitCodeOK
@@ -44,7 +45,16 @@ func (cli *CLI) Run(args []string) int {
     return ExitCodeBadArgs
   }
 
-  mdv.Init()
+  filePath := flags.Args()[0]
+
+  if edit {
+    mdv.Edit(filePath)
+    return ExitCodeOK
+  }
+
+  if err := mdv.Init(filePath); err != nil {
+    panic(err)
+  }
 
   return ExitCodeOK
 }
@@ -53,5 +63,7 @@ var helpText = `Usage: mdv [options] [path]
   mdv is a simple markdown viewer
 
 Options:
+  --edit, -e         Edit the file
+
   --version          Print the version of this application
 `
