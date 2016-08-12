@@ -13,14 +13,15 @@ func main() {
   var fp *os.File
   var err error
 
-  if len(os.Args) < 2 {
-    fp = os.Stdin
-  } else {
+  if len(os.Args) == 2 {
     fp, err = os.Open(os.Args[1])
     if err != nil {
       panic(err)
     }
     defer fp.Close()
+  } else {
+    fmt.Println("Input file path.")
+    os.Exit(0)
   }
 
   Output(bufio.NewScanner(fp))
