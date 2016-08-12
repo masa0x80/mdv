@@ -5,23 +5,8 @@ import (
   "bufio"
   "fmt"
   "os"
-)
 
-const (
-  Black   = "\x1b[30m"
-  Red     = "\x1b[31m"
-  Green   = "\x1b[32m"
-  Yellow  = "\x1b[33m"
-  Blue    = "\x1b[34m"
-  Magenta = "\x1b[35m"
-  Cyan    = "\x1b[36m"
-  White   = "\x1b[37m"
-
-  Underline = "\x1b[4m"
-  Bold      = "\x1b[1m"
-  Reverse   = "\x1b[7m"
-
-  Reset = "\x1b[0m"
+  "github.com/mgutz/ansi"
 )
 
 func main() {
@@ -51,17 +36,17 @@ func Output(scanner *bufio.Scanner) {
     level := re.ReplaceAllString(scanner.Text(), "$1")
     text  := re.ReplaceAllString(scanner.Text(), "$2")
     if scanner.Text() != text {
-      var template string = ""
+      var format string = ""
       switch len(level) {
-        case 1: template = Red
-        case 2: template = Green
-        case 3: template = Yellow
-        case 4: template = Blue
-        case 5: template = Magenta
-        case 6: template = Cyan
+        case 1: format = "red+b"
+        case 2: format = "green+b"
+        case 3: format = "yellow+b"
+        case 4: format = "blue+b"
+        case 5: format = "magenta+b"
+        case 6: format = "cyan+b"
       }
-      template += Bold + "%s %s" + Reset + "\n"
-      fmt.Printf(template, level, text)
+      msg := ansi.Color(level + " " + text, format)
+      fmt.Println(msg)
     } else {
       fmt.Printf("%s\n", scanner.Text())
     }
