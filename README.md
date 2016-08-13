@@ -1,10 +1,10 @@
 # Mdv
 
+[![MIT LICENSE](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+
 `mdv` is a simple markdown viewer.
 
 ## Usage
-
-Basic usage is...
 
 ### View
 
