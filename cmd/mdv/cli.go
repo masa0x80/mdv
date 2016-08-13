@@ -46,6 +46,10 @@ func (cli *CLI) Run(args []string) int {
   }
 
   filePath := flags.Args()[0]
+  if !mdv.Exists(filePath) {
+    fmt.Fprintln(cli.errStream, "mdv: ", fmt.Errorf("Invalid file path"))
+    return ExitCodeBadArgs
+  }
 
   if edit {
     mdv.Edit(filePath)
